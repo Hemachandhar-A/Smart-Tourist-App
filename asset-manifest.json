@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/Hemachandhar-A/Smart-Tourist-App/static/css/main.d3005b6e.css",
+    "main.js": "/Hemachandhar-A/Smart-Tourist-App/static/js/main.205dc192.js",
+    "static/js/453.747b4083.chunk.js": "/Hemachandhar-A/Smart-Tourist-App/static/js/453.747b4083.chunk.js",
+    "static/media/home-background.jpg": "/Hemachandhar-A/Smart-Tourist-App/static/media/home-background.49d80bbc4398f54ccfaf.jpg",
+    "static/media/placeholder.jpg": "/Hemachandhar-A/Smart-Tourist-App/static/media/placeholder.d286f917a78b61b7f860.jpg",
+    "index.html": "/Hemachandhar-A/Smart-Tourist-App/index.html",
+    "main.d3005b6e.css.map": "/Hemachandhar-A/Smart-Tourist-App/static/css/main.d3005b6e.css.map",
+    "main.205dc192.js.map": "/Hemachandhar-A/Smart-Tourist-App/static/js/main.205dc192.js.map",
+    "453.747b4083.chunk.js.map": "/Hemachandhar-A/Smart-Tourist-App/static/js/453.747b4083.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d3005b6e.css",
+    "static/js/main.205dc192.js"
+  ]
+}
