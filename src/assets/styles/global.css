@@ -1,0 +1,62 @@
+/* travel-itinerary-app/src/assets/styles/global.css */
+
+/* Global styles for the entire app */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --text-color: #343a40;
+  --background-light: #f8f9fa;
+  --card-background: #ffffff;
+  --border-color: #dee2e6;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text-color);
+  background-color: var(--background-light);
+}
+
+.app-container {
+  /* Set a min-height to ensure the app container fills the viewport */
+  min-height: 100vh;
+}
+
+/* Home Page specific background image */
+.home-page-2 {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white; /* Text color on top of the image */
+  background: url('../images/home-background.jpg') no-repeat center center/cover;
+}
+
+/* Common button styles */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card styles */
+.card {
+  background-color: var(--card-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
+  margin-bottom: 24px;
+}

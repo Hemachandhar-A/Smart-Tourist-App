@@ -1,0 +1,110 @@
+/* src/assets/styles/CuratedPlaceCard.css */
+
+.curated-place-card {
+  display: flex;
+  align-items: center;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.place-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.place-details {
+  flex-grow: 1;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.place-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #343a40;
+}
+
+.suggested-timing {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.place-description {
+  font-size: 0.9rem;
+  color: #495057;
+  margin: 8px 0;
+}
+
+.info-row {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.place-safety {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.place-safety.safety-high { background-color: #28a745; }
+.place-safety.safety-medium { background-color: #ffc107; }
+.place-safety.safety-low { background-color: #dc3545; }
+
+/* New Crowd Level Styling */
+.place-crowd {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.place-crowd.crowd-high { background-color: #dc3545; }
+.place-crowd.crowd-medium { background-color: #ffc107; }
+.place-crowd.crowd-low { background-color: #28a745; }
+
+.place-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-button, .remove-button {
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.add-button:hover {
+  background-color: #0056b3;
+}
+
+.add-button.added {
+  background-color: #28a745;
+  color: white;
+  pointer-events: none;
+}

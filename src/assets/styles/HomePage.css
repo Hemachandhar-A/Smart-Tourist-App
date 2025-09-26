@@ -1,0 +1,213 @@
+/* src/assets/styles/HomePage.css */
+
+.homepage-main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa; /* Sets the default background for the rest of the page */
+}
+
+.hero-section-container {
+  position: relative;
+  min-height: 60vh; /* Adjust this to change the image size */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-section-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.hero-content {
+  z-index: 2;
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin: 15px 0 30px;
+  max-width: 600px;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.cta-button {
+  padding: 14px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-button.primary {
+  background-color: white;
+  color: #000;
+  border: none;
+}
+
+.cta-button.secondary {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.cta-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.below-fold-content {
+  flex-grow: 1;
+  padding: 40px 50px;
+  background-color: transparent;
+}
+
+.my-itineraries-dashboard {
+  display: flex;
+  gap: 20px;
+}
+
+.your-journeys-container {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.your-journeys-container h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.my-itineraries-list-container {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.itinerary-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.itinerary-list-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.itinerary-actions-header {
+  display: flex;
+  gap: 10px;
+}
+
+.explore-button, .plan-button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid;
+}
+
+.explore-button {
+  background-color: transparent;
+  color: #007bff;
+  border-color: #007bff;
+}
+
+.plan-button {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-tab {
+  background-color: #f1f3f5;
+  color: #495057;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filter-tab.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.filter-tab .count {
+  margin-left: 5px;
+  font-size: 0.9em;
+}
+
+.itinerary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.upcoming-features {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.upcoming-features h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.upcoming-features ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.upcoming-features li {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}

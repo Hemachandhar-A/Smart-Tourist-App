@@ -1,0 +1,38 @@
+/* src/assets/styles/ProgressBar.css */
+
+.progress-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ced4da; /* Inactive */
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.step-circle.active {
+  background-color: #007bff; /* Active */
+}
+
+.step-line {
+  width: 100px; /* Length of the line between circles */
+  height: 4px;
+  background-color: #ced4da; /* Inactive */
+  margin: 0 -5px; /* Overlap with circles */
+  transition: background-color 0.3s ease;
+}
+
+.step-line.active {
+  background-color: #007bff; /* Active */
+}

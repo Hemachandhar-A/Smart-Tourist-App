@@ -1,0 +1,112 @@
+/* src/assets/styles/ItineraryDay.css */
+
+.itinerary-day-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+
+.day-header {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #343a40;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.places-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.place-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+  padding: 10px 15px;
+  border: 1px solid #f1f3f5;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  font-size: 1rem;
+}
+
+.place-main-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.timing-dropdown {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #007bff;
+  background-color: white;
+  min-width: 120px;
+}
+
+.place-name {
+  color: #343a40;
+  font-weight: bold;
+}
+
+.place-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.place-safety {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.place-safety.safety-high { background-color: #28a745; }
+.place-safety.safety-medium { background-color: #ffc107; }
+.place-safety.safety-low { background-color: #dc3545; }
+
+.place-crowd {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: capitalize;
+}
+
+.place-crowd.crowd-high { background-color: #dc3545; }
+.place-crowd.crowd-medium { background-color: #ffc107; }
+.place-crowd.crowd-low { background-color: #28a745; }
+
+.remove-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.remove-button:hover {
+  background-color: #c82333;
+}

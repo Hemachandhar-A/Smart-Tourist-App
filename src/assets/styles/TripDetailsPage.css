@@ -1,0 +1,178 @@
+/* src/assets/styles/TripDetailsPage.css */
+
+.trip-details-container {
+  padding: 30px 50px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.trip-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.trip-details-header .back-button {
+  text-decoration: none;
+  color: #000;
+  font-size: 2rem;
+  margin-right: 20px;
+  line-height: 1;
+}
+
+.header-content {
+  flex-grow: 1;
+}
+
+.trip-details-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #343a40;
+  margin: 0;
+}
+
+.trip-details-subtitle {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 5px 0 0;
+}
+
+.actions-section {
+  display: flex;
+  gap: 15px;
+}
+
+.edit-toggle-button, .save-button {
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #007bff;
+  background-color: transparent;
+  color: #007bff;
+  transition: all 0.2s ease;
+}
+
+.edit-toggle-button:hover, .save-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.itinerary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.itinerary-day-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.day-header {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #343a40;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.places-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.place-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  border: 1px solid #f1f3f5;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  font-size: 1rem;
+}
+
+.place-details-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-grow: 1;
+}
+
+.place-details-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.edit-input {
+  border: 1px solid #ced4da;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.place-timing {
+  font-weight: bold;
+  color: #007bff;
+  min-width: 80px;
+}
+
+.place-name {
+  color: #495057;
+}
+
+.remove-place-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.2s ease;
+}
+
+.remove-place-button:hover {
+  background-color: #c82333;
+}
+
+.add-place-button {
+  width: 100%;
+  background-color: #f1f3f5;
+  color: #495057;
+  border: 1px dashed #ced4da;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.add-place-button:hover {
+  background-color: #e9ecef;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
