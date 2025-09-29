@@ -5,15 +5,14 @@ import ExploreDestinationsPage from "./pages/ExploreDestinationsPage";
 import PlanJourneyPage from "./pages/PlanJourneyPage";
 import TripDetailsPage from "./pages/TripDetailsPage";
 import "./assets/styles/global.css";
-import AdminApp from "./admin";
-import Hems from "./Hems";
-
+import AdminApp from "./AdminPages/admin";
+import Main from "./HomeComponents/Main";
 function App() {
   return (
     <Router>
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<Hems />} />
+          <Route path="/" element={<Main />} />
           <Route path="/admin" element={<AdminApp />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/explore" element={<ExploreDestinationsPage />} />
