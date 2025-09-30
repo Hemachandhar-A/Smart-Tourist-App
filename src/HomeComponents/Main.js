@@ -9,6 +9,8 @@ import AboutPage from './AboutPage.js';
 import HelpPage from './HelpPage.js';
 import Footer from './Footer.js';
 import Toast from './Toast.js';
+import SmartMain from '../SmartTravelZones/SmartMain.js';
+import { Link } from 'lucide-react';
 
 // Main App Component
 const Main = () => {
@@ -174,6 +176,8 @@ const handlePanicAlert = async () => {
         return <AboutPage />;
       case 'help':
         return <HelpPage />;
+      case 'smart':
+        return <SmartMain />;
       default:
         return <HomePage onPanicClick={handlePanicAlert} isLoading={isAlertLoading} alertStatus={alertStatus} />;
     }
@@ -333,6 +337,12 @@ const HomePage = ({ onPanicClick, isLoading, alertStatus }) => {
       description: "Smart trip planning with real-time updates and recommendations"
     },
     {
+    icon: <Globe className="feature-icon" />,
+    title: "Interactive Safety Map",
+    link : '/smart',
+    description: "Real-time map showing danger zones, safe areas, emergency services, and tourist hotspots with color-coded safety levels"
+    },
+    {
       icon: <Globe className="feature-icon" />,
       title: "Multilingual AI Chat Assistant",
       description: "24/7 AI support in over 50 languages"
@@ -341,11 +351,6 @@ const HomePage = ({ onPanicClick, isLoading, alertStatus }) => {
       icon: <Users className="feature-icon" />,
       title: "Group Coordination Dashboard",
       description: "Keep track of group members and coordinate activities"
-    },
-    {
-    icon: <Globe className="feature-icon" />,
-    title: "Interactive Safety Map",
-    description: "Real-time map showing danger zones, safe areas, emergency services, and tourist hotspots with color-coded safety levels"
     }
     
   ];
@@ -402,7 +407,7 @@ const HomePage = ({ onPanicClick, isLoading, alertStatus }) => {
           <a
             key={index}
             href={feature.link}
-            target="_blank"
+            target="_self"
             rel="noopener noreferrer"
             className="feature-card"
             style={{ animationDelay: `${index * 0.1}s` }}

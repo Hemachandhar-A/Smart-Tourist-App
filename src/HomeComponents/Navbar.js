@@ -7,6 +7,7 @@ const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenu
     { id: 'about', label: 'About Us' },
     { id: 'help', label: 'Help' },
     { id: 'profile', label: 'Profile' },
+
   ];
 
   return (
@@ -14,7 +15,7 @@ const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenu
       <div className="nav-container">
         <div className="nav-brand">
           <Shield className="brand-icon" />
-          <span className='nav-brand-span'>TouristGuard</span>
+          <span className='nav-brand-span'>B.R.A.V.O.</span>
         </div>
         
         <div className="nav-menu">

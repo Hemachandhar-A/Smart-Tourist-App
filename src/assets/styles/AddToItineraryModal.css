@@ -6,7 +6,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  /* Dark overlay to focus attention on the modal (standard for light themes) */
+  background: rgba(0, 0, 0, 0.65); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,13 +15,19 @@
 }
 
 .modal-content {
-  background: white;
+  /* Use the white card background for high visibility */
+  background: var(--card-background); 
+  /* Remove backdrop-filter as glassmorphism is gone */
   padding: 30px;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  /* Use the light theme card shadow */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); 
   position: relative;
+  /* Remove glass border, use a standard border if desired, but shadow is enough */
+  border: none; 
+  color: var(--text-color);
 }
 
 .close-button {
@@ -31,52 +38,44 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6c757d;
+  /* Use secondary text color for a softer look */
+  color: var(--text-color-secondary); 
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: var(--primary-color);
 }
 
 .modal-content h3 {
   font-size: 1.5rem;
   margin-top: 0;
-  border-bottom: 1px solid #dee2e6;
+  /* Use light border color for a clean separator */
+  border-bottom: 1px solid var(--border-color);
   padding-bottom: 10px;
+  color: var(--text-color);
 }
 
-.modal-section {
-  margin-top: 20px;
+.modal-content label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: var(--text-color); /* Darker text for labels for better contrast */
 }
 
-.modal-section h4 {
-  font-size: 1.1rem;
-  color: #495057;
-  margin-bottom: 10px;
-}
-
-.input-field {
+.modal-content input, .modal-content select {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
+  margin-bottom: 20px;
+  /* These will now correctly inherit the clean, light-themed input styles from global.css */
 }
 
-.action-button {
+.modal-content button {
   width: 100%;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
 }
 
-.primary-button {
-  background-color: #007bff;
-  color: white;
+/* Responsiveness */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 20px;
+  }
 }
-
-.secondary-button {
-  background-color: #f1f3f5;
-  color: #495057;
-}
-
-.primary-button:hover { background-color: #0056b3; }
-.secondary-button:hover { background-color: #e9ecef; }

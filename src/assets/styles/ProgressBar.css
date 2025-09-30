@@ -11,28 +11,53 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #ced4da; /* Inactive */
-  color: white;
+  background-color: rgba(255, 255, 255, 0.1); /* Inactive Glass */
+  color: var(--text-color-secondary);
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
   font-size: 1.1rem;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.step-circle.active {
-  background-color: #007bff; /* Active */
+.step-circle.active,
+.step-circle.completed {
+  background-color: var(--primary-color); /* Active Vibrant Color */
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 10px rgba(255, 65, 108, 0.6);
+  transform: scale(1.1);
 }
 
 .step-line {
-  width: 100px; /* Length of the line between circles */
+  width: 100px;
   height: 4px;
-  background-color: #ced4da; /* Inactive */
-  margin: 0 -5px; /* Overlap with circles */
+  background-color: rgba(255, 255, 255, 0.2); /* Inactive Glass Line */
+  margin: 0 -5px;
   transition: background-color 0.3s ease;
 }
 
 .step-line.active {
-  background-color: #007bff; /* Active */
+  background-color: var(--primary-color); /* Active Vibrant Line */
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+    .progress-bar-container {
+        /* Allow scroll for smaller screens to prevent wrapping */
+        margin-bottom: 30px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        justify-content: flex-start;
+    }
+    .step-line {
+        width: 60px; /* Shorter line length on mobile */
+    }
+    .step-circle {
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
 }

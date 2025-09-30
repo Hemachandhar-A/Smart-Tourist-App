@@ -200,7 +200,7 @@ const PlanJourneyPage = () => {
   return (
     <div className="plan-journey-container">
       <header className="plan-journey-header">
-        <Link to="/" className="back-button">←</Link>
+        <Link to="/home" className="back-button">←</Link>
         <div className="header-content">
           <h1 className="plan-title">Plan Your Journey</h1>
           <p className="plan-subtitle">Create your perfect Indian adventure with our curated destinations</p>

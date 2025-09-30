@@ -47,7 +47,7 @@ const HomePage = () => {
 
   return (
     <div className="homepage-main-container">
-      <div className="hero-section-container" style={{ backgroundImage: `url(${background})` }}>
+      <div className="hero-section-container">
         <main className="hero-content">
           <h1>Plan Your Journey, Perfectly.</h1>
           <p>Create a detailed, safe, and personalized itinerary for your next adventure across India.</p>
@@ -59,63 +59,72 @@ const HomePage = () => {
       </div>
 
       <section className="below-fold-content">
-        <div className="my-itineraries-dashboard card">
-          <div className="your-journeys-container card">
-            <h2>Your Journeys</h2>
-            <Calendar highlightedDates={highlightedDates} />
-            <div className="upcoming-features">
-              <h3>Upcoming Features</h3>
-              <ul>
-                <li>More flexible date and time scheduling</li>
-                <li>Offline access for saved itineraries</li>
-                <li>Push notifications for reminders</li>
-                <li>Social media sharing of itineraries</li>
-              </ul>
-            </div>
-
-          </div>
-          <div className="my-itineraries-list-container card">
-            <div className="itinerary-list-header">
-              <h2>My Itineraries</h2>
-              <div className="itinerary-actions-header">
-                <Link to="/explore" className="explore-button">Explore Destinations</Link>
-                <Link to="/plan" className="plan-button">+ Plan New Trip</Link>
+        {/* New Centering Wrapper: Constrains max-width and centers content */}
+        <div className="main-content-wrapper">
+          {/* New Grid Container: Organizes sidebar and main list */}
+          <div className="dashboard-grid">
+            
+            {/* Sidebar (Fixed width column on desktop) */}
+            <div className="your-journeys-container card sidebar">
+              <h2>Your Journeys</h2>
+              <Calendar highlightedDates={highlightedDates} />
+              <div className="upcoming-features">
+                <h3>Upcoming Features</h3>
+                <ul>
+                  <li>More flexible date and time scheduling</li>
+                  <li>Offline access for saved itineraries</li>
+                  <li>Push notifications for reminders</li>
+                  <li>Social media sharing of itineraries</li>
+                </ul>
               </div>
             </div>
-            <div className="filter-tabs">
-              <button
-                className={`filter-tab ${activeFilter === 'All' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('All')}
-              >
-                All Trips <span className="count">{getStatusCount('All')}</span>
-              </button>
-              <button
-                className={`filter-tab ${activeFilter === 'upcoming' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('upcoming')}
-              >
-                Upcoming <span className="count">{getStatusCount('upcoming')}</span>
-              </button>
-              <button
-                className={`filter-tab ${activeFilter === 'ongoing' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('ongoing')}
-              >
-                Ongoing <span className="count">{getStatusCount('ongoing')}</span>
-              </button>
-              <button
-                className={`filter-tab ${activeFilter === 'past' ? 'active' : ''}`}
-                onClick={() => setActiveFilter('past')}
-              >
-              Past <span className="count">{getStatusCount('past')}</span>
-              </button>
-            </div>
-            <div className="itinerary-list">
-              {filteredItineraries.length > 0 ? (
-                filteredItineraries.map((itinerary) => (
-                  <ItineraryCard key={itinerary.id} itinerary={itinerary} onViewDetails={handleViewDetails} />
-                ))
-              ) : (
-                <p className="no-itineraries">No itineraries found.</p>
-              )}
+            
+            {/* Main Content (Flexible width column on desktop) */}
+            <div className="my-itineraries-list-container card main-list">
+              <div className="itinerary-list-header">
+                <h2>My Itineraries</h2>
+                <div className="itinerary-actions-header">
+                  <Link to="/explore" className="explore-button">Explore Destinations</Link>
+                  <Link to="/plan" className="plan-button">+ Plan New Trip</Link>
+                </div>
+              </div>
+              <div className="filter-tabs">
+                <button
+                  className={`filter-tab ${activeFilter === 'All' ? 'active' : ''}`}
+                  onClick={() => setActiveFilter('All')}
+                >
+                  All Trips <span className="count">{getStatusCount('All')}</span>
+                </button>
+                <button
+                  className={`filter-tab ${activeFilter === 'upcoming' ? 'active' : ''}`}
+                  onClick={() => setActiveFilter('upcoming')}
+                >
+                  Upcoming <span className="count">{getStatusCount('upcoming')}</span>
+                </button>
+                <button
+                  className={`filter-tab ${activeFilter === 'ongoing' ? 'active' : ''}`}
+                  onClick={() => setActiveFilter('ongoing')}
+                >
+                  Ongoing <span className="count">{getStatusCount('ongoing')}</span>
+                </button>
+                <button
+                  className={`filter-tab ${activeFilter === 'past' ? 'active' : ''}`}
+                  onClick={() => setActiveFilter('past')}
+                >
+                Past <span className="count">{getStatusCount('past')}</span>
+                </button>
+              </div>
+              <div className="itinerary-list">
+                {filteredItineraries.length > 0 ? (
+                  <div className="itinerary-grid">
+                    {filteredItineraries.map((itinerary) => (
+                      <ItineraryCard key={itinerary.id} itinerary={itinerary} onViewDetails={handleViewDetails} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="no-itineraries">No itineraries found.</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

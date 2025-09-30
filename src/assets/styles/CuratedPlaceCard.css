@@ -3,10 +3,20 @@
 .curated-place-card {
   display: flex;
   align-items: center;
-  background-color: #f8f9fa;
-  border-radius: 12px;
+  /* Glassmorphism background */
+  background: var(--glass-bg-low);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--border-radius);
   padding: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
+  border: var(--glass-border);
+  color: var(--text-color);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.curated-place-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
 .place-image {
@@ -31,18 +41,18 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
-  color: #343a40;
+  color: var(--text-color);
 }
 
 .suggested-timing {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--primary-color);
   font-weight: 500;
 }
 
 .place-description {
   font-size: 0.9rem;
-  color: #495057;
+  color: var(--text-color-secondary);
   margin: 8px 0;
 }
 
@@ -50,12 +60,13 @@
   display: flex;
   gap: 15px;
   align-items: center;
+  flex-wrap: wrap; /* Added for responsiveness */
 }
 
 .place-safety {
   font-size: 0.8rem;
   font-weight: bold;
-  color: #fff;
+  color: #121212;
   padding: 4px 10px;
   border-radius: 20px;
 }
@@ -68,43 +79,33 @@
 .place-crowd {
   font-size: 0.8rem;
   font-weight: bold;
-  color: white;
+  color: #121212;
   padding: 4px 10px;
   border-radius: 20px;
-  text-transform: capitalize;
 }
 
-.place-crowd.crowd-high { background-color: #dc3545; }
+.place-crowd.crowd-low { background-color: var(--secondary-color); }
 .place-crowd.crowd-medium { background-color: #ffc107; }
-.place-crowd.crowd-low { background-color: #28a745; }
+.place-crowd.crowd-high { background-color: var(--primary-color); color: white; }
 
-.place-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.add-button, .remove-button {
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.add-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-}
-
-.add-button:hover {
-  background-color: #0056b3;
-}
-
-.add-button.added {
-  background-color: #28a745;
-  color: white;
-  pointer-events: none;
+/* Responsiveness */
+@media (max-width: 600px) {
+    .curated-place-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .place-image {
+        width: 100%;
+        height: 150px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .info-row {
+        margin-top: 10px;
+    }
 }

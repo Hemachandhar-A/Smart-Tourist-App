@@ -4,27 +4,35 @@
   display: flex;
   flex-direction: column;
   border-left: 5px solid;
-  border-radius: 8px;
-  padding: 15px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   margin-bottom: 15px;
+  /* Glassmorphism background */
+  background: var(--glass-bg-low);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--card-shadow);
+  color: var(--text-color);
 }
 
 .itinerary-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.1);
 }
 
+/* Status Colors */
 .itinerary-card.status-ongoing {
-  border-color: #ffc107;
+  border-color: #ffc107; /* Orange */
 }
 
 .itinerary-card.status-upcoming {
-  border-color: #28a745;
+  border-color: #28a745; /* Green */
 }
 
 .itinerary-card.status-past {
-  border-color: #6c757d;
+  border-color: #6c757d; /* Gray */
 }
 
 .card-header {
@@ -35,10 +43,10 @@
 }
 
 .trip-title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 600;
   margin: 0;
-  color: #343a40;
+  color: var(--text-color);
 }
 
 .trip-status {
@@ -47,7 +55,7 @@
   font-size: 0.8rem;
   font-weight: bold;
   text-transform: capitalize;
-  color: #fff;
+  color: #121212; /* Dark text for bright status background */
 }
 
 .trip-status.status-ongoing {
@@ -57,69 +65,60 @@
   background-color: #28a745;
 }
 .trip-status.status-past {
-  background-color: #6c757d;
+  background-color: #909090;
 }
 
 .trip-dates {
-  font-size: 0.9rem;
-  color: #6c757d;
+  font-size: 0.95rem;
+  color: var(--text-color-secondary);
   margin: 0;
 }
 
 .trip-metadata {
   display: flex;
   gap: 15px;
-  margin-top: 10px;
+  margin-top: 15px;
   font-size: 0.9rem;
-  color: #495057;
+  color: var(--text-color-secondary);
+  flex-wrap: wrap; /* Added for responsiveness */
 }
 
 .trip-budget, .trip-safety, .trip-crowd {
   padding: 4px 10px;
-  border-radius: 20px;
-  background-color: #e9ecef;
-}
-
-.trip-summary {
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-top: 10px;
-}
-
-.card-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.card-button {
-  text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.1);
   font-weight: 500;
-  border: 1px solid;
-  transition: background-color 0.2s ease;
 }
 
-.card-button.view {
-  color: #007bff;
-  border-color: #007bff;
-  background-color: transparent;
+.view-button {
+    margin-top: 15px;
+    align-self: flex-start;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
 }
 
-.card-button.view:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.card-button.edit {
-  color: #6c757d;
-  border-color: #6c757d;
-  background-color: transparent;
-}
-
-.card-button.edit:hover {
-  background-color: #6c757d;
-  color: #fff;
+/* Responsiveness */
+@media (max-width: 600px) {
+    .itinerary-card {
+        padding: 15px;
+    }
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .trip-title {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+    .trip-status {
+        align-self: flex-end;
+    }
+    .trip-metadata {
+        gap: 10px;
+    }
 }

@@ -1,9 +1,10 @@
 /* src/assets/styles/ExploreDestinationsPage.css */
 
 .explore-page-container {
-  padding: 30px;
-  background-color: #f8f9fa;
+  padding: 30px 50px;
+  background-color: transparent; /* Mandatory transparent background */
   min-height: 100vh;
+  color: var(--text-color);
 }
 
 .explore-header {
@@ -14,16 +15,16 @@
 
 .back-button {
   text-decoration: none;
-  color: #007bff;
-  font-size: 1rem;
-  font-weight: 500;
+  color: var(--primary-color);
+  font-size: 2rem;
   margin-right: 20px;
+  line-height: 1;
 }
 
 .explore-title {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #343a40;
+  color: var(--text-color);
   margin: 0;
 }
 
@@ -41,17 +42,9 @@
 
 .search-bar input {
   width: 100%;
+  /* Inherits global input styles for glass effect */
   padding: 12px 20px;
   border-radius: 25px;
-  border: 1px solid #ced4da;
-  font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.search-bar input:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .filter-buttons {
@@ -61,43 +54,61 @@
 }
 
 .filter-button {
-  background-color: #e9ecef;
-  color: #495057;
-  border: none;
   padding: 10px 20px;
   border-radius: 25px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  background: var(--glass-bg-low);
+  color: var(--text-color-secondary);
+  border: var(--glass-border);
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.filter-button:hover {
-  background-color: #dee2e6;
+  transition: all 0.2s ease;
 }
 
 .filter-button.active {
-  background-color: #007bff;
+  background-color: var(--primary-color);
   color: white;
+  border: none;
+  box-shadow: 0 0 8px rgba(255, 65, 108, 0.4);
 }
 
-.destination-list {
+.destination-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
 }
 
-.no-results {
-  text-align: center;
-  width: 100%;
-  margin-top: 50px;
-  color: #6c757d;
-  font-style: italic;
-}
-
-.filter-placeholder {
-  font-size: 1rem;
-  color: #6c757d;
-  font-style: italic;
-  margin-left: 20px;
+/* Responsiveness */
+@media (max-width: 768px) {
+    .explore-page-container {
+        padding: 20px;
+    }
+    .explore-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .explore-title {
+        font-size: 1.8rem;
+    }
+    .search-and-filters {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .search-bar {
+        width: 100%;
+    }
+    .filter-buttons {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 5px;
+    }
+    .filter-button {
+        white-space: nowrap;
+    }
+    .destination-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }

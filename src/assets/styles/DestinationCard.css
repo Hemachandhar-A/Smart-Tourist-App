@@ -1,22 +1,27 @@
 /* src/assets/styles/DestinationCard.css */
 
 .destination-card {
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Glassmorphism background */
+  background: var(--glass-bg-low);
+  backdrop-filter: var(--glass-blur);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease;
-  height: 440px !important; /* This is the definitive fix for your environment */
-  min-height: 400px !important; /* Ensures the card size is consistent */
+  transition: transform 0.2s ease, background 0.2s ease;
+  height: auto; 
+  min-height: 400px;
   padding: 20px;
   justify-content: space-between;
+  border: var(--glass-border);
+  color: var(--text-color);
 }
 
 .destination-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .destination-image-container {
@@ -24,7 +29,8 @@
   width: 100%;
   padding-top: 60%;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px; 
 }
 
 .destination-image {
@@ -40,7 +46,7 @@
   position: absolute;
   top: 15px;
   left: 15px;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 5px 10px;
   border-radius: 15px;
@@ -55,24 +61,26 @@
 }
 
 .destination-info h3 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
   margin: 0 0 5px;
+  color: var(--text-color);
 }
 
 .destination-state {
-  color: #6c757d;
+  color: var(--text-color-secondary);
   font-size: 0.9rem;
   margin: 0 0 10px;
 }
 
 .destination-description {
   font-size: 0.9rem;
-  color: #495057;
+  color: var(--text-color-secondary);
   margin: 10px 0;
   line-height: 1.4;
-  height: 5.6rem;
+  height: 4.2rem; 
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .destination-meta {
@@ -80,47 +88,45 @@
   gap: 15px;
   margin-top: auto;
   align-items: center;
+  flex-wrap: wrap; /* Added for responsiveness */
 }
 
-.safety-indicator {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: white;
-  background-color: #28a745;
+.destination-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
 }
 
-.safety-indicator.safety-medium {
-  background-color: #ffc107;
+.view-details-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    margin-left: auto;
 }
 
-.safety-indicator.safety-low {
-  background-color: #dc3545;
-}
-
-.crowd-indicator {
-  font-size: 0.85rem;
-  color: #495057;
-}
-
-.destination-actions {
-  padding-top: 15px;
-}
-
-.add-to-itinerary-button {
-  width: 100%;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 25px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.add-to-itinerary-button:hover {
-  background-color: #0056b3;
+/* Responsiveness */
+@media (max-width: 600px) {
+    .destination-card {
+        min-height: 350px;
+        padding: 15px;
+    }
+    .destination-info h3 {
+        font-size: 1.3rem;
+    }
+    .destination-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .view-details-button {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+    }
 }
