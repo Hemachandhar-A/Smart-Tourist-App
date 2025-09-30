@@ -76,7 +76,7 @@ useEffect(() => {
 
   // Handle panic button click
   // Add this configuration at the top of your App.js file
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'https://smart-tourist-app-backend.onrender.com';
 
 // Updated handlePanicAlert function
 const handlePanicAlert = async () => {

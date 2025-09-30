@@ -689,6 +689,106 @@ const SmartTravelZones = () => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
+
+
+          
+          </div>
+
+
+          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', maxHeight: 400, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex',  flexDirection: 'column', alignItems: 'center', marginBottom: 16 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: '#1f2937' }}>Travel Journal</h3>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 12, background: 'white', color: '#1f2937' }}>
+                  <option value="all">All</option>
+                  <option value="danger">Danger</option>
+                  <option value="entries">Entries</option>
+                </select>
+                <button onClick={() => setShowExportMenu(!showExportMenu)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', cursor: 'pointer' }}>
+                  <Download size={16} color="#1f2937" />
+                </button>
+                {showExportMenu && (
+                  <div style={{ position: 'absolute', marginTop: 35, right: 24, background: 'white', border: '1px solid #d1d5db', borderRadius: 8, padding: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000 }}>
+                    <button onClick={exportJournal} style={{ display: 'block', width: '100%', padding: '8px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: 14, color: '#1f2937', borderRadius: 6 }}>Export JSON</button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {filteredAlerts.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
+                  <Shield size={48} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+                  <div style={{ fontSize: 14 }}>No events yet</div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {filteredAlerts.map(alert => (
+                    <div key={alert.id} style={{ padding: 12, background: '#f9fafb', borderRadius: 10, borderLeft: `4px solid ${alert.type === 'sos' ? '#ef4444' : alert.fence_type === 'danger' ? '#ef4444' : '#6366f1'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 4 }}>
+                        <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{alert.fence_name}</div>
+                        <div style={{ fontSize: 11, color: '#6b7280' }}>{alert.timestamp.toLocaleTimeString()}</div>
+                      </div>
+                      <div style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.4 }}>{alert.message}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#6366f1' }}>{alerts.length}</div>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>Events</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#6366f1' }}>{alerts.filter(a => a.type === 'entry').length}</div>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>Entries</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: '#ef4444' }}>{alerts.filter(a => a.fence_type === 'danger' || a.type === 'sos').length}</div>
+                <div style={{ fontSize: 11, color: '#6b7280' }}>Alerts</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: '#1f2937' }}>Active Shields</h3>
+            <div style={{ display: 'grid', gap: 12 }}>
+              {[
+                { icon: Shield, name: 'Geo-Fencing', status: `${geoFences.length} zones`, active: true },
+                { icon: AlertTriangle, name: 'Danger Alerts', status: 'Armed', active: true },
+                { icon: Users, name: 'Family Link', status: privacySetting === 'only_me' ? 'Off' : 'Active', active: privacySetting !== 'only_me' },
+                { icon: Phone, name: 'Emergency SOS', status: 'Ready', active: true }
+              ].map((shield, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: shield.active ? 'rgba(34,197,94,0.1)' : 'rgba(156,163,175,0.1)', borderRadius: 10, border: `2px solid ${shield.active ? '#22c55e' : '#9ca3af'}` }}>
+                  <shield.icon size={20} color={shield.active ? '#22c55e' : '#9ca3af'} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{shield.name}</div>
+                    <div style={{ fontSize: 12, color: '#6b7280' }}>{shield.status}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {activeZones.size > 0 && (
+              <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #e5e7eb' }}>
+                <h4 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 12px', color: '#1f2937' }}>Current Zones</h4>
+                {Array.from(activeZones).map(zoneId => {
+                  const zone = geoFences.find(f => f.id === zoneId);
+                  return zone ? (
+                    <div key={zoneId} style={{ padding: 10, background: 'rgba(99,102,241,0.1)', borderRadius: 8, marginBottom: 8, borderLeft: '4px solid #6366f1' }}>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{zone.name}</div>
+                      <div style={{ fontSize: 12, color: '#6b7280' }}>Safety: {zone.safety_score}/100</div>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            )}
+          </div>       
+        </div>
+
+        
           <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: '#1f2937' }}>Demo Controls</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -766,102 +866,6 @@ const SmartTravelZones = () => {
             <div style={{ marginTop: 16, padding: 12, background: '#f3f4f6', borderRadius: 8, fontSize: 12, color: '#4b5563', lineHeight: 1.6 }}>
               <strong>Instructions:</strong> Click "Simulate Walk" to automatically navigate through zones and trigger realistic alerts based on road patterns. {isNavigating && "Navigation is currently active - simulation is disabled."}
             </div>
-          </div>
-
-
-          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.1)', maxHeight: 400, display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: '#1f2937' }}>Travel Journal</h3>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', fontSize: 12, background: 'white', color: '#1f2937' }}>
-                  <option value="all">All</option>
-                  <option value="danger">Danger</option>
-                  <option value="entries">Entries</option>
-                </select>
-                <button onClick={() => setShowExportMenu(!showExportMenu)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid #d1d5db', background: 'white', cursor: 'pointer' }}>
-                  <Download size={16} color="#1f2937" />
-                </button>
-                {showExportMenu && (
-                  <div style={{ position: 'absolute', marginTop: 35, right: 24, background: 'white', border: '1px solid #d1d5db', borderRadius: 8, padding: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 1000 }}>
-                    <button onClick={exportJournal} style={{ display: 'block', width: '100%', padding: '8px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontSize: 14, color: '#1f2937', borderRadius: 6 }}>Export JSON</button>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              {filteredAlerts.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: '#9ca3af' }}>
-                  <Shield size={48} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
-                  <div style={{ fontSize: 14 }}>No events yet</div>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {filteredAlerts.map(alert => (
-                    <div key={alert.id} style={{ padding: 12, background: '#f9fafb', borderRadius: 10, borderLeft: `4px solid ${alert.type === 'sos' ? '#ef4444' : alert.fence_type === 'danger' ? '#ef4444' : '#6366f1'}` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: 4 }}>
-                        <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{alert.fence_name}</div>
-                        <div style={{ fontSize: 11, color: '#6b7280' }}>{alert.timestamp.toLocaleTimeString()}</div>
-                      </div>
-                      <div style={{ fontSize: 13, color: '#4b5563', lineHeight: 1.4 }}>{alert.message}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginTop: 16, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#6366f1' }}>{alerts.length}</div>
-                <div style={{ fontSize: 11, color: '#6b7280' }}>Events</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#6366f1' }}>{alerts.filter(a => a.type === 'entry').length}</div>
-                <div style={{ fontSize: 11, color: '#6b7280' }}>Entries</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: '#ef4444' }}>{alerts.filter(a => a.fence_type === 'danger' || a.type === 'sos').length}</div>
-                <div style={{ fontSize: 11, color: '#6b7280' }}>Alerts</div>
-              </div>
-            </div>
-          </div>
-
-
-          <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 16, padding: 24, boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ fontSize: 18, fontWeight: 700, margin: '0 0 16px', color: '#1f2937' }}>Active Shields</h3>
-            <div style={{ display: 'grid', gap: 12 }}>
-              {[
-                { icon: Shield, name: 'Geo-Fencing', status: `${geoFences.length} zones`, active: true },
-                { icon: AlertTriangle, name: 'Danger Alerts', status: 'Armed', active: true },
-                { icon: Users, name: 'Family Link', status: privacySetting === 'only_me' ? 'Off' : 'Active', active: privacySetting !== 'only_me' },
-                { icon: Phone, name: 'Emergency SOS', status: 'Ready', active: true }
-              ].map((shield, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: shield.active ? 'rgba(34,197,94,0.1)' : 'rgba(156,163,175,0.1)', borderRadius: 10, border: `2px solid ${shield.active ? '#22c55e' : '#9ca3af'}` }}>
-                  <shield.icon size={20} color={shield.active ? '#22c55e' : '#9ca3af'} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{shield.name}</div>
-                    <div style={{ fontSize: 12, color: '#6b7280' }}>{shield.status}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {activeZones.size > 0 && (
-              <div style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid #e5e7eb' }}>
-                <h4 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 12px', color: '#1f2937' }}>Current Zones</h4>
-                {Array.from(activeZones).map(zoneId => {
-                  const zone = geoFences.find(f => f.id === zoneId);
-                  return zone ? (
-                    <div key={zoneId} style={{ padding: 10, background: 'rgba(99,102,241,0.1)', borderRadius: 8, marginBottom: 8, borderLeft: '4px solid #6366f1' }}>
-                      <div style={{ fontWeight: 600, fontSize: 14, color: '#1f2937' }}>{zone.name}</div>
-                      <div style={{ fontSize: 12, color: '#6b7280' }}>Safety: {zone.safety_score}/100</div>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            )}
-          </div>       
-        </div>
       </div>
 
       <style>{`
