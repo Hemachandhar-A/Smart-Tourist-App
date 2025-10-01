@@ -65,7 +65,7 @@ const HomePage = () => {
           <div className="dashboard-grid">
             
             {/* Sidebar (Fixed width column on desktop) */}
-            <div className="your-journeys-container card sidebar">
+            <div className="your-journeys-container cards sidebar">
               <h2>Your Journeys</h2>
               <Calendar highlightedDates={highlightedDates} />
               <div className="upcoming-features">
@@ -80,7 +80,7 @@ const HomePage = () => {
             </div>
             
             {/* Main Content (Flexible width column on desktop) */}
-            <div className="my-itineraries-list-container card main-list">
+            <div className="my-itineraries-list-container cards main-list">
               <div className="itinerary-list-header">
                 <h2>My Itineraries</h2>
                 <div className="itinerary-actions-header">

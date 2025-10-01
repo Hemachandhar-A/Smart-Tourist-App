@@ -1,16 +1,10 @@
-/*
- * INSTALLATION REQUIRED:
- * npm install react-leaflet leaflet
- * 
- * Add to your HTML head or import in your main CSS:
- * <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
- */
-
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Polygon, CircleMarker, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, Marker, Popup, useMap, CircleMarker } from 'react-leaflet';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import { Globe, AlertTriangle, Users, Map, Plus, Edit, Trash2, X, Bell, Activity, Shield, Navigation } from 'lucide-react';
 import L from 'leaflet';
 
-// Fix for default markers
+// Fix Leaflet default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -18,600 +12,608 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// HARDCODED DATASET - EXACT IMPLEMENTATION AS SPECIFIED
+// Realistic Zone Data
 const INITIAL_ZONES = [
   {
-    "id": "zone-1",
-    "name": "Central Market",
-    "polygon": [[28.617,77.200],[28.621,77.202],[28.620,77.210],[28.616,77.208]],
-    "numCrimes": 45,
-    "remedialCoveragePct": 40,
-    "crowdDensity": 0.7,
-    "weatherSeverity": 0.2
+    id: 'z1',
+    name: 'Marina Beach',
+    type: 'crowded',
+    polygon: [[13.050, 80.282], [13.055, 80.285], [13.053, 80.290], [13.048, 80.287]],
+    touristCount: 450,
+    lastAlert: '2 mins ago'
   },
   {
-    "id": "zone-2",
-    "name": "Harbor Road",
-    "polygon": [[28.605,77.220],[28.608,77.223],[28.606,77.230],[28.603,77.227]],
-    "numCrimes": 5,
-    "remedialCoveragePct": 85,
-    "crowdDensity": 0.15,
-    "weatherSeverity": 0.05
+    id: 'z2',
+    name: 'Old Town Market',
+    type: 'danger',
+    polygon: [[13.060, 80.270], [13.065, 80.273], [13.063, 80.278], [13.058, 80.275]],
+    touristCount: 80,
+    lastAlert: '5 mins ago'
   },
   {
-    "id": "zone-3",
-    "name": "Old Town",
-    "polygon": [[28.630,77.190],[28.634,77.193],[28.632,77.200],[28.628,77.197]],
-    "numCrimes": 22,
-    "remedialCoveragePct": 60,
-    "crowdDensity": 0.45,
-    "weatherSeverity": 0.5
+    id: 'z3',
+    name: 'Temple Complex',
+    type: 'safe',
+    polygon: [[13.040, 80.265], [13.045, 80.268], [13.043, 80.273], [13.038, 80.270]],
+    touristCount: 120,
+    lastAlert: 'None'
   },
   {
-    "id": "zone-4",
-    "name": "Hill Park",
-    "polygon": [[28.640,77.210],[28.643,77.213],[28.641,77.220],[28.638,77.217]],
-    "numCrimes": 12,
-    "remedialCoveragePct": 70,
-    "crowdDensity": 0.25,
-    "weatherSeverity": 0.1
+    id: 'z4',
+    name: 'Shopping District',
+    type: 'crowded',
+    polygon: [[13.070, 80.280], [13.075, 80.283], [13.073, 80.288], [13.068, 80.285]],
+    touristCount: 320,
+    lastAlert: '1 min ago'
+  },
+  {
+    id: 'z5',
+    name: 'Dark Alley Area',
+    type: 'danger',
+    polygon: [[13.055, 80.260], [13.058, 80.262], [13.056, 80.265], [13.053, 80.263]],
+    touristCount: 15,
+    lastAlert: 'Just now'
   }
 ];
 
-// Geo-fence danger zone
-const DANGER_GEOFENCE = {
-  polygon: [[28.618,77.205],[28.622,77.207],[28.621,77.212],[28.617,77.210]],
-  name: "High Crime Alert Zone"
-};
-
-// Tourist movement path
-const TOURIST_PATH = [
-  [28.615, 77.205],
-  [28.617, 77.206],
-  [28.619, 77.207], // This point triggers geo-fence alert
-  [28.621, 77.208],
-  [28.623, 77.209]
+const DUMMY_TOURISTS = [
+  { id: 't1', name: 'Tourist A', position: [13.052, 80.284] },
+  { id: 't2', name: 'Tourist B', position: [13.062, 80.272] },
+  { id: 't3', name: 'Tourist C', position: [13.042, 80.267] }
 ];
 
-// Escape route waypoints
-const ESCAPE_ROUTE = [
-  [28.619, 77.207], // From alert point
-  [28.622, 77.204], // Safe waypoint
-  [28.625, 77.202]  // Police station
-];
-
-// FUZZY SYSTEM IMPLEMENTATION - EXACT RULES AS SPECIFIED
-const fuzzyEvaluation = (zone) => {
-  // Input mapping
-  const crimeLevel = zone.numCrimes <= 5 ? 'Low' : zone.numCrimes <= 20 ? 'Medium' : 'High';
-  const remedialLevel = zone.remedialCoveragePct <= 40 ? 'Poor' : zone.remedialCoveragePct <= 70 ? 'Moderate' : 'Good';
-  const crowdLevel = zone.crowdDensity <= 0.33 ? 'Low' : zone.crowdDensity <= 0.66 ? 'Medium' : 'High';
-  const weatherLevel = zone.weatherSeverity <= 0.33 ? 'Clear' : zone.weatherSeverity <= 0.66 ? 'Moderate' : 'Severe';
-
-  let riskTier = 'Low';
-  let rulesFired = [];
-
-  // EXACT FUZZY RULES AS SPECIFIED
-  if (crimeLevel === 'High' && remedialLevel === 'Poor') {
-    riskTier = 'VeryHigh';
-    rulesFired.push('Rule 1: High crimes + Poor remedial → VeryHigh');
-  } else if (crimeLevel === 'Medium' && remedialLevel === 'Moderate' && crowdLevel === 'High') {
-    riskTier = 'High';
-    rulesFired.push('Rule 2: Medium crimes + Moderate remedial + High crowd → High');
-  } else if (crimeLevel === 'Low' && remedialLevel === 'Good') {
-    riskTier = 'Low';
-    rulesFired.push('Rule 3: Low crimes + Good remedial → Low');
-  } else {
-    riskTier = 'Medium';
-    rulesFired.push('Default: Medium risk');
-  }
-
-  // Weather and crowd escalation
-  if (weatherLevel === 'Severe' && crowdLevel === 'High') {
-    const tierMap = { 'Low': 'Medium', 'Medium': 'High', 'High': 'VeryHigh', 'VeryHigh': 'VeryHigh' };
-    riskTier = tierMap[riskTier];
-    rulesFired.push('Weather + Crowd escalation: +1 tier');
-  }
-
-  // Remedial coverage reduction
-  if (zone.remedialCoveragePct >= 60) {
-    const tierMap = { 'VeryHigh': 'High', 'High': 'Medium', 'Medium': 'Low', 'Low': 'Low' };
-    riskTier = tierMap[riskTier];
-    rulesFired.push('Good remedial coverage: -1 tier');
-  }
-
-  // Distress override
-  if (zone.numCrimes > 30) {
-    riskTier = 'VeryHigh';
-    rulesFired.push('OVERRIDE: Crime spike > 30 → VeryHigh');
-  }
-
-  // SCORING/DEFUZZIFICATION AS SPECIFIED
-  const tierScores = { 'Low': 20, 'Medium': 50, 'High': 75, 'VeryHigh': 95 };
-  let riskScore = tierScores[riskTier];
-  
-  // Continuous adjustments
-  riskScore = riskScore + (zone.crowdDensity * 10) + (zone.weatherSeverity * 8) - ((zone.remedialCoveragePct - 50) / 5);
-  riskScore = Math.max(0, Math.min(100, riskScore));
-
-  return {
-    score: Math.round(riskScore),
-    tier: riskTier,
-    rulesFired,
-    breakdown: { crimeLevel, remedialLevel, crowdLevel, weatherLevel }
+const getZoneColor = (type) => {
+  const colors = {
+    danger: '#ef4444',
+    crowded: '#f97316',
+    safe: '#10b981'
   };
+  return colors[type] || '#6b7280';
 };
 
-// COLOR MAPPING AS SPECIFIED
-const getZoneColor = (score) => {
-  if (score <= 30) return '#2ECC71'; // Green
-  if (score <= 55) return '#F1C40F'; // Yellow
-  if (score <= 75) return '#E67E22'; // Orange
-  return '#E74C3C'; // Red
+const getZoneStyle = (type, isHovered) => ({
+  fillColor: getZoneColor(type),
+  fillOpacity: isHovered ? 0.7 : 0.5,
+  color: getZoneColor(type),
+  weight: isHovered ? 3 : 2,
+  opacity: 0.9
+});
+
+// Heatmap simulation component
+const HeatmapLayer = ({ zones }) => {
+  const map = useMap();
+  
+  useEffect(() => {
+    const heatPoints = zones.flatMap(zone => {
+      const centerLat = zone.polygon.reduce((sum, coord) => sum + coord[0], 0) / zone.polygon.length;
+      const centerLng = zone.polygon.reduce((sum, coord) => sum + coord[1], 0) / zone.polygon.length;
+      const intensity = zone.type === 'danger' ? 1 : zone.type === 'crowded' ? 0.7 : 0.3;
+      
+      return Array(Math.ceil(zone.touristCount / 20)).fill([centerLat, centerLng, intensity]);
+    });
+
+    // Simulate heatmap with circle markers
+    return () => {};
+  }, [zones, map]);
+
+  return null;
 };
 
 const RiskZoneMap = () => {
   const [zones, setZones] = useState(INITIAL_ZONES);
-  const [predictiveLayerOn, setPredictiveLayerOn] = useState(true);
+  const [tourists, setTourists] = useState(DUMMY_TOURISTS);
   const [selectedZone, setSelectedZone] = useState(null);
-  const [showPanel, setShowPanel] = useState(false);
-  const [touristPosition, setTouristPosition] = useState(0);
-  const [showAlert, setShowAlert] = useState(false);
-  const [showEscapeRoute, setShowEscapeRoute] = useState(false);
-  const [autoPlay, setAutoPlay] = useState(false);
-  const [resolvedZones, setResolvedZones] = useState(new Set());
-  const [watchedZones, setWatchedZones] = useState(new Set());
-  
-  const intervalRef = useRef(null);
+  const [showAddZone, setShowAddZone] = useState(false);
+  const [alerts, setAlerts] = useState([]);
+  const [hoveredZone, setHoveredZone] = useState(null);
+  const [stats, setStats] = useState({
+    totalTourists: 985,
+    dangerAlerts: 12,
+    crowdedZones: 2,
+    safeZones: 1
+  });
 
-  // Auto-play tourist movement
+  // Simulate real-time updates
   useEffect(() => {
-    if (autoPlay) {
-      intervalRef.current = setInterval(() => {
-        setTouristPosition(prev => {
-          const next = (prev + 1) % TOURIST_PATH.length;
-          
-          // Check geo-fence intersection at position 2
-          if (next === 2 && !showAlert) {
-            setShowAlert(true);
-            setShowEscapeRoute(true);
-            setTimeout(() => setShowAlert(false), 5000);
+    const interval = setInterval(() => {
+      setStats(prev => ({
+        totalTourists: prev.totalTourists + Math.floor(Math.random() * 10 - 5),
+        dangerAlerts: Math.max(0, prev.dangerAlerts + Math.floor(Math.random() * 3 - 1)),
+        crowdedZones: zones.filter(z => z.type === 'crowded').length,
+        safeZones: zones.filter(z => z.type === 'safe').length
+      }));
+
+      // Simulate tourist movement
+      setTourists(prev => prev.map(t => ({
+        ...t,
+        position: [
+          t.position[0] + (Math.random() - 0.5) * 0.001,
+          t.position[1] + (Math.random() - 0.5) * 0.001
+        ]
+      })));
+
+      // Check for danger zone alerts
+      tourists.forEach(tourist => {
+        zones.forEach(zone => {
+          if (zone.type === 'danger') {
+            const centerLat = zone.polygon.reduce((sum, coord) => sum + coord[0], 0) / zone.polygon.length;
+            const centerLng = zone.polygon.reduce((sum, coord) => sum + coord[1], 0) / zone.polygon.length;
+            const distance = Math.sqrt(
+              Math.pow(tourist.position[0] - centerLat, 2) + 
+              Math.pow(tourist.position[1] - centerLng, 2)
+            );
+            
+            if (distance < 0.005 && Math.random() > 0.95) {
+              addAlert(`${tourist.name} entered ${zone.name}!`, 'danger');
+            }
           }
-          
-          return next;
         });
-      }, 2000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    }
+      });
+    }, 3000);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+    return () => clearInterval(interval);
+  }, [tourists, zones]);
+
+  const addAlert = (message, type) => {
+    const newAlert = {
+      id: Date.now(),
+      message,
+      type,
+      time: new Date().toLocaleTimeString()
     };
-  }, [autoPlay, showAlert]);
-
-  // Refresh data function
-  const refreshData = () => {
-    setZones(zones.map(zone => ({
-      ...zone,
-      numCrimes: Math.max(0, zone.numCrimes + Math.floor((Math.random() - 0.5) * 10)),
-      remedialCoveragePct: Math.max(0, Math.min(100, zone.remedialCoveragePct + Math.floor((Math.random() - 0.5) * 20))),
-      crowdDensity: Math.max(0, Math.min(1, zone.crowdDensity + (Math.random() - 0.5) * 0.3)),
-      weatherSeverity: Math.max(0, Math.min(1, zone.weatherSeverity + (Math.random() - 0.5) * 0.3))
-    })));
+    setAlerts(prev => [newAlert, ...prev].slice(0, 5));
+    
+    // Console log for demo
+    console.log(`🚨 ALERT: ${message}`);
+    console.log(`📧 Email sent to admin@tourism.gov.in`);
+    console.log(`📱 SMS sent to +91-XXXX-XXXX`);
   };
 
-  const handleZoneClick = (zone) => {
-    setSelectedZone(zone);
-    setShowPanel(true);
+  const deleteZone = (id) => {
+    setZones(zones.filter(z => z.id !== id));
+    setSelectedZone(null);
   };
 
-  const resolveZone = (zoneId) => {
-    setResolvedZones(prev => new Set([...prev, zoneId]));
+  const updateZoneType = (id, newType) => {
+    setZones(zones.map(z => z.id === id ? { ...z, type: newType } : z));
   };
 
-  const markWatched = (zoneId) => {
-    setWatchedZones(prev => new Set([...prev, zoneId]));
-  };
+  // Chart data
+  const zoneDistribution = [
+    { name: 'Safe', value: zones.filter(z => z.type === 'safe').length, color: '#10b981' },
+    { name: 'Crowded', value: zones.filter(z => z.type === 'crowded').length, color: '#f97316' },
+    { name: 'Danger', value: zones.filter(z => z.type === 'danger').length, color: '#ef4444' }
+  ];
+
+  const topRiskyZones = zones
+    .filter(z => z.type !== 'safe')
+    .sort((a, b) => b.touristCount - a.touristCount)
+    .slice(0, 5);
 
   return (
-    <div style={{ height: '100vh', width: '100%', position: 'relative', fontFamily: 'Arial, sans-serif' }}>
-      {/* Demo Badge */}
+    <div style={{ 
+      height: '100vh', 
+      display: 'flex', 
+      color: 'black',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+      {/* Sidebar */}
       <div style={{
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
-        background: 'rgba(231, 76, 60, 0.9)',
-        color: 'white',
-        padding: '5px 15px',
-        borderRadius: '15px',
-        fontSize: '12px',
-        zIndex: 1000,
-        fontWeight: 'bold'
+        width: '380px',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        overflowY: 'auto',
+        boxShadow: '2px 0 20px rgba(0,0,0,0.1)'
       }}>
-        Demo Mode — Simulated Data
-      </div>
-
-      {/* Header */}
-      <div style={{
-        position: 'absolute',
-        top: '10px',
-        left: '10px',
-        background: 'rgba(44, 62, 80, 0.95)',
-        color: 'white',
-        padding: '15px 20px',
-        borderRadius: '8px',
-        zIndex: 1000,
-        minWidth: '350px'
-      }}>
-        <h2 style={{ margin: '0 0 5px 0', fontSize: '18px' }}>
-          🔴 Predictive Risk Heatmap & Zone Manager
-        </h2>
-        <p style={{ margin: '0', fontSize: '12px', opacity: '0.8' }}>
-          Dynamic safety scoring, geo-fences, and escape routing — simulated for demo
-        </p>
-      </div>
-
-      {/* Control Panel */}
-      <div style={{
-        position: 'absolute',
-        top: '120px',
-        left: '10px',
-        background: 'rgba(52, 73, 94, 0.95)',
-        color: 'white',
-        padding: '15px',
-        borderRadius: '8px',
-        zIndex: 1000,
-        width: '280px'
-      }}>
-        <div style={{ marginBottom: '15px' }}>
-          <button 
-            onClick={refreshData}
-            style={{
-              background: '#3498db',
-              border: 'none',
-              color: 'white',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginRight: '10px'
-            }}
-          >
-            🔄 Refresh Data
-          </button>
-          <button 
-            onClick={() => setAutoPlay(!autoPlay)}
-            style={{
-              background: autoPlay ? '#e74c3c' : '#27ae60',
-              border: 'none',
-              color: 'white',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            {autoPlay ? '⏸️ Pause' : '▶️ Auto-Play'}
-          </button>
-        </div>
-
-        <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
-            <input 
-              type="checkbox" 
-              checked={predictiveLayerOn}
-              onChange={(e) => setPredictiveLayerOn(e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            Predictive Layer
-          </label>
-        </div>
-
-        {/* Legend */}
-        <div>
-          <h4 style={{ margin: '0 0 10px 0', fontSize: '14px' }}>Risk Level Legend:</h4>
-          <div style={{ fontSize: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-              <div style={{ width: '20px', height: '15px', background: '#2ECC71', marginRight: '8px', borderRadius: '2px' }}></div>
-              Safe (0-30)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-              <div style={{ width: '20px', height: '15px', background: '#F1C40F', marginRight: '8px', borderRadius: '2px' }}></div>
-              Caution (31-55)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '4px' }}>
-              <div style={{ width: '20px', height: '15px', background: '#E67E22', marginRight: '8px', borderRadius: '2px' }}></div>
-              Risky (56-75)
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: '20px', height: '15px', background: '#E74C3C', marginRight: '8px', borderRadius: '2px' }}></div>
-              High Risk (76-100)
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Alert Toast */}
-      {showAlert && (
+        {/* Header */}
         <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'rgba(231, 76, 60, 0.95)',
-          color: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          zIndex: 2000,
-          maxWidth: '400px',
-          textAlign: 'center',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+          padding: '24px',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          color: 'white'
         }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>⚠️ Auto-Alert</h3>
-          <p style={{ margin: '0 0 15px 0' }}>
-            Approaching high-risk zone — Suggested escape route ready
-          </p>
-          <div style={{ fontSize: '14px', textAlign: 'left' }}>
-            <strong>Escape Route:</strong>
-            <br />• Walk north 200m
-            <br />• Turn right onto Market Lane  
-            <br />• Reach Police Booth
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            <Shield size={32} />
+            <div>
+              <h1 style={{ margin: 0, fontSize: '20px', fontWeight: '700' }}>Tourist Safety</h1>
+              <p style={{ margin: 0, fontSize: '13px', opacity: 0.9 }}>Admin Dashboard</p>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* Map */}
-      <MapContainer 
-        center={[28.620, 77.205]} 
-        zoom={14} 
-        style={{ height: '100%', width: '100%' }}
-        zoomControl={false}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+        {/* Stats Cards */}
+        <div style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          <StatCard icon={<Users size={20} />} label="Total Tourists" value={stats.totalTourists} color="#667eea" />
+          <StatCard icon={<AlertTriangle size={20} />} label="Danger Alerts" value={stats.dangerAlerts} color="#ef4444" />
+          <StatCard icon={<Activity size={20} />} label="Crowded Zones" value={stats.crowdedZones} color="#f97316" />
+          <StatCard icon={<Shield size={20} />} label="Safe Zones" value={stats.safeZones} color="#10b981" />
+        </div>
 
-        {/* Zone Polygons */}
-        {zones.map(zone => {
-          const evaluation = fuzzyEvaluation(zone);
-          const color = getZoneColor(evaluation.score);
-          const isResolved = resolvedZones.has(zone.id);
-          const isWatched = watchedZones.has(zone.id);
-          
-          return (
+        {/* Live Alerts */}
+        <div style={{ padding: '0 20px 20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <Bell size={18} color="#ef4444" />
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '600' }}>Live Alerts</h3>
+          </div>
+          <div style={{ 
+            background: '#fff', 
+            borderRadius: '12px', 
+            padding: '12px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            maxHeight: '200px',
+            overflowY: 'auto'
+          }}>
+            {alerts.length === 0 ? (
+              <p style={{ margin: 0, fontSize: '13px', color: '#6b7280', textAlign: 'center' }}>
+                No recent alerts
+              </p>
+            ) : (
+              alerts.map(alert => (
+                <div key={alert.id} style={{
+                  padding: '10px',
+                  marginBottom: '8px',
+                  background: alert.type === 'danger' ? '#fef2f2' : '#fefce8',
+                  borderRadius: '8px',
+                  borderLeft: `3px solid ${alert.type === 'danger' ? '#ef4444' : '#f97316'}`
+                }}>
+                  <div style={{ fontSize: '13px', fontWeight: '600', marginBottom: '4px' }}>
+                    {alert.message}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#6b7280' }}>{alert.time}</div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Zone Distribution Chart */}
+        <div style={{ padding: '0 20px 20px' }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>Zone Distribution</h3>
+          <div style={{ 
+            background: '#fff', 
+            borderRadius: '12px', 
+            padding: '16px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+          }}>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={zoneDistribution}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {zoneDistribution.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+            <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '12px' }}>
+              {zoneDistribution.map(item => (
+                <div key={item.name} style={{ textAlign: 'center' }}>
+                  <div style={{ width: '12px', height: '12px', background: item.color, borderRadius: '50%', margin: '0 auto 4px' }}></div>
+                  <div style={{ fontSize: '11px', color: '#6b7280' }}>{item.name}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '700' }}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Top Risky Zones */}
+        <div style={{ padding: '0 20px 20px' }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '600' }}>Top Risky Zones</h3>
+          <div style={{ 
+            background: '#fff', 
+            borderRadius: '12px', 
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+          }}>
+            {topRiskyZones.map((zone, idx) => (
+              <div key={zone.id} style={{
+                padding: '12px 16px',
+                borderBottom: idx < topRiskyZones.length - 1 ? '1px solid #f3f4f6' : 'none',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: '600', marginBottom: '2px' }}>{zone.name}</div>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                    <span style={{ 
+                      color: getZoneColor(zone.type),
+                      fontWeight: '600'
+                    }}>
+                      {zone.type.toUpperCase()}
+                    </span> • {zone.lastAlert}
+                  </div>
+                </div>
+                <div style={{
+                  background: getZoneColor(zone.type),
+                  color: 'white',
+                  padding: '4px 12px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: '600'
+                }}>
+                  {zone.touristCount}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Zone Management */}
+        <div style={{ padding: '0 20px 20px' }}>
+          <button
+            onClick={() => setShowAddZone(!showAddZone)}
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+            }}
+          >
+            <Plus size={18} />
+            Add New Zone
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ flex: 1, position: 'relative' }}>
+        {/* Map */}
+        <MapContainer 
+          center={[13.055, 80.275]} 
+          zoom={14} 
+          style={{ height: '100%', width: '100%' }}
+          zoomControl={false}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; OpenStreetMap contributors'
+          />
+
+          <HeatmapLayer zones={zones} />
+
+          {/* Zone Polygons */}
+          {zones.map(zone => (
             <Polygon
               key={zone.id}
               positions={zone.polygon}
-              pathOptions={{
-                fillColor: isResolved ? '#95a5a6' : color,
-                weight: isWatched ? 4 : 2,
-                color: isWatched ? '#3498db' : '#2c3e50',
-                opacity: 1,
-                fillOpacity: predictiveLayerOn ? 0.6 : 0.3
-              }}
+              pathOptions={getZoneStyle(zone.type, hoveredZone === zone.id)}
               eventHandlers={{
-                click: () => handleZoneClick(zone)
+                click: () => setSelectedZone(zone),
+                mouseover: () => setHoveredZone(zone.id),
+                mouseout: () => setHoveredZone(null)
               }}
             >
               <Popup>
-                <div>
-                  <strong>{zone.name}</strong><br />
-                  Risk Score: {evaluation.score}<br />
-                  Risk Level: {evaluation.tier}<br />
-                  <small>Click zone for details</small>
+                <div style={{ minWidth: '150px' }}>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '14px' }}>{zone.name}</h4>
+                  <div style={{ fontSize: '12px', marginBottom: '4px' }}>
+                    Type: <span style={{ 
+                      color: getZoneColor(zone.type),
+                      fontWeight: '600'
+                    }}>{zone.type.toUpperCase()}</span>
+                  </div>
+                  <div style={{ fontSize: '12px', marginBottom: '4px' }}>
+                    Tourists: {zone.touristCount}
+                  </div>
+                  <div style={{ fontSize: '12px' }}>
+                    Last Alert: {zone.lastAlert}
+                  </div>
                 </div>
               </Popup>
             </Polygon>
-          );
-        })}
+          ))}
 
-        {/* Heatmap simulation with circles */}
-        {predictiveLayerOn && zones.map(zone => {
-          const centerLat = zone.polygon.reduce((sum, coord) => sum + coord[0], 0) / zone.polygon.length;
-          const centerLng = zone.polygon.reduce((sum, coord) => sum + coord[1], 0) / zone.polygon.length;
-          
-          return (
-            <CircleMarker
-              key={`heat-${zone.id}`}
-              center={[centerLat, centerLng]}
-              radius={Math.max(5, zone.numCrimes * 0.8)}
-              pathOptions={{
-                fillColor: '#e74c3c',
-                color: 'transparent',
-                fillOpacity: Math.min(0.4, zone.crowdDensity * 0.6)
-              }}
-            />
-          );
-        })}
+          {/* Heatmap circles for visual effect */}
+          {zones.map(zone => {
+            const centerLat = zone.polygon.reduce((sum, coord) => sum + coord[0], 0) / zone.polygon.length;
+            const centerLng = zone.polygon.reduce((sum, coord) => sum + coord[1], 0) / zone.polygon.length;
+            const radius = zone.type === 'danger' ? 80 : zone.type === 'crowded' ? 60 : 40;
+            
+            return (
+              <CircleMarker
+                key={`heat-${zone.id}`}
+                center={[centerLat, centerLng]}
+                radius={radius}
+                pathOptions={{
+                  fillColor: getZoneColor(zone.type),
+                  color: 'transparent',
+                  fillOpacity: 0.2
+                }}
+              />
+            );
+          })}
 
-        {/* Danger Geo-fence */}
-        <Polygon
-          positions={DANGER_GEOFENCE.polygon}
-          pathOptions={{
-            fillColor: 'transparent',
-            weight: 3,
-            color: showAlert ? '#ffffff' : '#e74c3c',
-            opacity: showAlert ? 1 : 0.8,
-            dashArray: '10, 10',
-            fillOpacity: 0
-          }}
-        />
+          {/* Tourist Markers */}
+          {tourists.map(tourist => (
+            <Marker key={tourist.id} position={tourist.position}>
+              <Popup>
+                <div style={{ fontSize: '12px' }}>
+                  <strong>{tourist.name}</strong>
+                  <div>Status: Active</div>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
 
-        {/* Tourist Position */}
-        <Marker position={TOURIST_PATH[touristPosition]}>
-          <Popup>
-            <div>
-              <strong>📍 Tourist Location</strong><br />
-              Position: {touristPosition + 1} of {TOURIST_PATH.length}
-            </div>
-          </Popup>
-        </Marker>
-
-        {/* Escape Route */}
-        {showEscapeRoute && (
-          <Polyline
-            positions={ESCAPE_ROUTE}
-            pathOptions={{
-              color: '#27ae60',
-              weight: 4,
-              opacity: 0.8,
-              dashArray: '5, 10'
-            }}
-          />
-        )}
-
-        {/* Incident Icons */}
-        <CircleMarker
-          center={[28.618, 77.208]}
-          radius={8}
-          pathOptions={{ color: '#e74c3c', fillColor: '#e74c3c', fillOpacity: 1 }}
-        >
-          <Popup>
-            <div>
-              <strong>🔺 High Crime Cluster</strong><br />
-              Recent incidents reported
-            </div>
-          </Popup>
-        </CircleMarker>
-
-        <CircleMarker
-          center={[28.625, 77.202]}
-          radius={8}
-          pathOptions={{ color: '#3498db', fillColor: '#3498db', fillOpacity: 1 }}
-        >
-          <Popup>
-            <div>
-              <strong>💎 Police Station</strong><br />
-              Emergency response center
-            </div>
-          </Popup>
-        </CircleMarker>
-
-        <CircleMarker
-          center={[28.632, 77.195]}
-          radius={8}
-          pathOptions={{ color: '#95a5a6', fillColor: '#95a5a6', fillOpacity: 1 }}
-        >
-          <Popup>
-            <div>
-              <strong>☁️ Weather Alert</strong><br />
-              Severe weather reported
-            </div>
-          </Popup>
-        </CircleMarker>
-      </MapContainer>
-
-      {/* Zone Detail Panel */}
-      {showPanel && selectedZone && (
+        {/* Floating Badge */}
         <div style={{
           position: 'absolute',
-          top: '10px',
-          right: '10px',
-          bottom: '10px',
-          width: '350px',
-          background: 'rgba(44, 62, 80, 0.95)',
-          color: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          zIndex: 1000,
-          overflowY: 'auto'
+          top: '20px',
+          right: '20px',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(10px)',
+          padding: '12px 20px',
+          borderRadius: '24px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          fontSize: '13px',
+          fontWeight: '600',
+          color: '#667eea',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          zIndex: 1000
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-            <h3 style={{ margin: 0 }}>{selectedZone.name}</h3>
-            <button 
-              onClick={() => setShowPanel(false)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'white',
-                fontSize: '20px',
-                cursor: 'pointer'
-              }}
-            >
-              ✕
-            </button>
-          </div>
+          <Activity size={16} />
+          Live Mode • SIH 2025
+        </div>
 
-          {(() => {
-            const evaluation = fuzzyEvaluation(selectedZone);
-            return (
+        {/* Zone Editor Panel */}
+        {selectedZone && (
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            right: '20px',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            padding: '20px',
+            borderRadius: '16px',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            width: '300px',
+            zIndex: 1000
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '16px' }}>
               <div>
-                <div style={{ 
-                  background: getZoneColor(evaluation.score),
-                  padding: '10px',
-                  borderRadius: '4px',
-                  marginBottom: '15px',
-                  textAlign: 'center'
-                }}>
-                  <strong>Risk Score: {evaluation.score}</strong><br />
-                  <small>{evaluation.tier} Risk Level</small>
-                </div>
-
-                <div style={{ marginBottom: '15px', fontSize: '14px' }}>
-                  <h4>Zone Metrics:</h4>
-                  <div>• Crimes: {selectedZone.numCrimes}</div>
-                  <div>• Remedial Coverage: {selectedZone.remedialCoveragePct}%</div>
-                  <div>• Crowd Density: {Math.round(selectedZone.crowdDensity * 100)}%</div>
-                  <div>• Weather Severity: {Math.round(selectedZone.weatherSeverity * 100)}%</div>
-                </div>
-
-                <div style={{ marginBottom: '15px', fontSize: '14px' }}>
-                  <h4>Fuzzy Analysis:</h4>
-                  <div style={{ fontSize: '12px' }}>
-                    {evaluation.breakdown.crimeLevel} crimes, {evaluation.breakdown.remedialLevel} remedial, {evaluation.breakdown.crowdLevel} crowd, {evaluation.breakdown.weatherLevel} weather
-                  </div>
-                  <div style={{ marginTop: '10px', fontSize: '12px' }}>
-                    <strong>Rules Fired:</strong>
-                    {evaluation.rulesFired.map((rule, idx) => (
-                      <div key={idx}>• {rule}</div>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button 
-                    onClick={() => resolveZone(selectedZone.id)}
-                    disabled={resolvedZones.has(selectedZone.id)}
-                    style={{
-                      background: resolvedZones.has(selectedZone.id) ? '#95a5a6' : '#27ae60',
-                      border: 'none',
-                      color: 'white',
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      cursor: resolvedZones.has(selectedZone.id) ? 'not-allowed' : 'pointer',
-                      fontSize: '12px'
-                    }}
-                  >
-                    {resolvedZones.has(selectedZone.id) ? '✓ Resolved' : 'Resolve'}
-                  </button>
-                  <button 
-                    onClick={() => markWatched(selectedZone.id)}
-                    disabled={watchedZones.has(selectedZone.id)}
-                    style={{
-                      background: watchedZones.has(selectedZone.id) ? '#95a5a6' : '#3498db',
-                      border: 'none',
-                      color: 'white',
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      cursor: watchedZones.has(selectedZone.id) ? 'not-allowed' : 'pointer',
-                      fontSize: '12px'
-                    }}
-                  >
-                    {watchedZones.has(selectedZone.id) ? '👁️ Watched' : 'Mark Watched'}
-                  </button>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '700' }}>
+                  {selectedZone.name}
+                </h3>
+                <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                  ID: {selectedZone.id}
                 </div>
               </div>
-            );
-          })()}
-        </div>
-      )}
+              <button
+                onClick={() => setSelectedZone(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  color: '#6b7280'
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: '600', display: 'block', marginBottom: '8px' }}>
+                Zone Type
+              </label>
+              <select
+                value={selectedZone.type}
+                onChange={(e) => updateZoneType(selectedZone.id, e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  fontSize: '13px'
+                }}
+              >
+                <option value="safe">Safe</option>
+                <option value="crowded">Crowded</option>
+                <option value="danger">Danger</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: '#667eea',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Edit size={14} />
+                Edit
+              </button>
+              <button
+                onClick={() => deleteZone(selectedZone.id)}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <Trash2 size={14} />
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
+
+const StatCard = ({ icon, label, value, color }) => (
+  <div style={{
+    background: '#fff',
+    borderRadius: '12px',
+    padding: '16px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    position: 'relative',
+    overflow: 'hidden'
+  }}>
+    <div style={{
+      position: 'absolute',
+      top: '-10px',
+      right: '-10px',
+      width: '60px',
+      height: '60px',
+      background: color,
+      opacity: 0.1,
+      borderRadius: '50%'
+    }}></div>
+    <div style={{ color, marginBottom: '8px' }}>
+      {icon}
+    </div>
+    <div style={{ fontSize: '24px', fontWeight: '700', marginBottom: '4px' }}>
+      {value}
+    </div>
+    <div style={{ fontSize: '12px', color: '#6b7280' }}>
+      {label}
+    </div>
+  </div>
+);
 
 export default RiskZoneMap;

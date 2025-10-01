@@ -1,5 +1,6 @@
 import { Shield, X, Menu } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 // Navbar Component
 const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const navItems = [
@@ -7,13 +8,36 @@ const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenu
     { id: 'about', label: 'About Us' },
     { id: 'help', label: 'Help' },
     { id: 'profile', label: 'Profile' },
+    { id: 'logout', label: 'Logout' }
+
 
   ];
+
+  const navigate = useNavigate();
+  const handleNavClick = (itemId) => {
+    if (itemId === 'logout') {
+      handleLogout();
+    } else {
+      setCurrentPage(itemId);
+    }
+  };
+
+  const handleLogout = () => {
+    // Clear any stored authentication data
+    // localStorage.removeItem('authToken');
+    // localStorage.removeItem('userData');
+    // You can also clear sessionStorage if you're using it
+    // sessionStorage.clear();
+    
+    // Redirect to login page
+    navigate('/'); // or wherever your login page is
+  };
 
   return (
     <nav className="navbar">
       <div className="nav-container">
         <div className="nav-brand">
+          
           <Shield className="brand-icon" />
           <span className='nav-brand-span'>B.R.A.V.O.</span>
         </div>
@@ -23,7 +47,7 @@ const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenu
             <button
               key={item.id}
               className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
-              onClick={() => setCurrentPage(item.id)}
+              onClick={() => handleNavClick(item.id)}
             >
               {item.label}
             </button>

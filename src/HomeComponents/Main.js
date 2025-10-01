@@ -10,6 +10,7 @@ import HelpPage from './HelpPage.js';
 import Footer from './Footer.js';
 import Toast from './Toast.js';
 import SmartMain from '../SmartTravelZones/SmartMain.js';
+import QRVerification from './QRVerification.js';
 import { Link } from 'lucide-react';
 
 // Main App Component
@@ -78,6 +79,17 @@ useEffect(() => {
   // Add this configuration at the top of your App.js file
 const API_BASE_URL = 'https://smart-tourist-app-backend.onrender.com';
 
+// Utility: Generate dynamic tourist ID every hour
+const generateDynamicTouristId = (baseId) => {
+  const now = new Date();
+  // Create a key that changes every hour
+  const hourKey = `${now.getUTCFullYear()}${now.getUTCMonth()+1}${now.getUTCDate()}${now.getUTCHours()}`;
+  return `${baseId}-${hourKey}`;
+};
+
+const dynamicTouristId = generateDynamicTouristId(userData.touristId);
+
+
 // Updated handlePanicAlert function
 const handlePanicAlert = async () => {
   setIsAlertLoading(true);
@@ -100,10 +112,12 @@ const handlePanicAlert = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
+      //userData.touristId
       body: JSON.stringify({
-        tourist_id: userData.touristId,
+        tourist_id: dynamicTouristId,
         latitude: roundedLatitude,
-        longitude: roundedLongitude
+        longitude: roundedLongitude,
+        alert_type: "SuddenLocationDropOff"
       })
     });
 
@@ -178,6 +192,7 @@ const handlePanicAlert = async () => {
         return <HelpPage />;
       case 'smart':
         return <SmartMain />;
+      
       default:
         return <HomePage onPanicClick={handlePanicAlert} isLoading={isAlertLoading} alertStatus={alertStatus} />;
     }
@@ -328,6 +343,7 @@ const HomePage = ({ onPanicClick, isLoading, alertStatus }) => {
     {
       icon: <QrCode className="feature-icon" />,
       title: "Blockchain Digital Tourist ID",
+      link: "/qr",
       description: "Secure QR verification system powered by blockchain technology"
     },
     {

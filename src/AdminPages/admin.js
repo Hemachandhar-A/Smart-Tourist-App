@@ -6,6 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import RiskZoneMap from './Riskzone'; // Adjust path as needed
 // Fix for default markers in react-leaflet
 import L from 'leaflet';
+import TouristAnalyticsDashboard from './TouristAnalyticsDashboard';
 
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -291,7 +292,7 @@ const AdminAnomalyDashboard = () => {
     <div className="anomaly-dashboard">
       <div className="dashboard-header">
         <h1 className="dashboard-title">
-          🚨 AI-Based Anomaly Detection System
+           AI-Based Anomaly Detection System
         </h1>
         <div className="ai-status-indicator">
           <div className="ai-pulse"></div>
@@ -338,7 +339,7 @@ const AdminAnomalyDashboard = () => {
 
       <div className="dashboard-content">
         <div className="anomalies-section">
-          <h2 className="section-title">🎯 Detected Anomalies</h2>
+          <h2 className="section-title">Detected Anomalies</h2>
           <div className="anomalies-grid">
             {anomalies.map(anomaly => (
               <div 
@@ -401,7 +402,7 @@ const AdminAnomalyDashboard = () => {
         </div>
 
         <div className="timeline-section">
-          <h2 className="timeline-title">📡 AI Activity Feed</h2>
+          <h2 className="timeline-title">AI Activity Feed</h2>
           <div className="ai-indicator">
             <div className="processing-dots">
               <span></span><span></span><span></span>
@@ -1225,7 +1226,7 @@ const AdminApp = () => {
   // Fetch alerts from backend
   const fetchAlerts = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/get_alerts/`);
+      const response = await fetch(`https://smart-tourist-app-backend.onrender.com/api/get_alerts/`);
       if (response.ok) {
         const data = await response.json();
         setAlertsData(data);
@@ -1264,7 +1265,7 @@ const AdminApp = () => {
       case 'users':
         return <UserManagement />;
       case 'analytics':
-        return <Analytics />;
+        return <TouristAnalyticsDashboard />;
       case 'risk-zones':
         return <RiskZoneMap />;
       default:
@@ -1401,7 +1402,6 @@ const AdminNavbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobil
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <BarChart3 size={20} /> },
     { id: 'alerts', label: 'Alert Management', icon: <AlertTriangle size={20} /> },
-    { id: 'users', label: 'User Management', icon: <UserCheck size={20} /> },
     { id: 'analytics', label: 'Analytics', icon: <Activity size={20} /> },
     { id: 'risk-zones', label: 'Risk Zones', icon: <Globe size={20} /> }
   ];
@@ -1411,7 +1411,7 @@ const AdminNavbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobil
       <div className="nav-container">
         <div className="nav-brand">
           <Shield className="brand-icon" />
-          <span className="nav-brand-span">TouristGuard Admin</span>
+          <span className="nav-brand-span">B.R.A.V.O ADMIN</span>
         </div>
         
         <div className="nav-menu">
@@ -1644,6 +1644,7 @@ const AdminDashboard = ({ alertsData, loading }) => {
             <div className="table-header">
               <span>Tourist ID</span>
               <span>Location</span>
+              <span >AlertType</span>
               <span>Timestamp</span>
               <span>Status</span>
             </div>
@@ -1655,6 +1656,7 @@ const AdminDashboard = ({ alertsData, loading }) => {
                     <MapPin className="location-icon" />
                     {typeof alert.latitude === 'number' ? alert.latitude.toFixed(4) : alert.latitude}, {typeof alert.longitude === 'number' ? alert.longitude.toFixed(4) : alert.longitude}
                   </span>
+                  <span className="alert-type">{alert.alertType || alert.alert_type}</span>
                   <span className="timestamp">
                     <Clock className="time-icon" />
                     {alert.timestamp}
@@ -1791,6 +1793,8 @@ const AdminDashboard = ({ alertsData, loading }) => {
           align-items: center;
           gap: 0.5rem;
           color: rgba(255, 255, 255, 0.8);
+          white-space: normal;
+          word-break: break-word;
         }
         
         .status {

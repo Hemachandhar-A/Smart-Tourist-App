@@ -10,12 +10,16 @@ import Main from "./HomeComponents/Main";
 import SmartMain from "./SmartTravelZones/SmartMain";
 import Itenarymain from "./pages/ItenaryMain";
 import LoginPage from "./HomeComponents/LoginPage";
+import QRmain from "./HomeComponents/QRmain";
+import VerifiedPage from "./HomeComponents/VerifiedPage";
 function App() {
   return (
     <Router>
       <div className="app-container">
         <Routes>
           <Route path="/" element={<LoginPage />} />
+          <Route path="/verified" element={<VerifiedPage />} />
+          <Route path="/qr" element={<QRmain />} />
           <Route path="/main" element={<Main />} />
           <Route path="/smart" element={<SmartMain />}/>
           <Route path="/admin" element={<AdminApp />} />
