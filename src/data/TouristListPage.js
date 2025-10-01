@@ -8,7 +8,7 @@ const TouristListPage = () => {
   useEffect(() => {
     const fetchTourists = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/tourists/');
+        const response = await fetch('https://smart-tourist-app-backend.onrender.com/api/tourists/');
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setTourists(data);

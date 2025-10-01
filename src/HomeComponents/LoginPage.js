@@ -7,6 +7,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+    email:'',
     userType: 'tourist'
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -55,6 +56,7 @@ const LoginPage = () => {
       body: JSON.stringify({
         touristId: "T-" + Math.floor(1000 + Math.random() * 9000), // generate unique id
         name: formData.username,
+        email: formData.email,
         phone: "+91-9876543210", // you can make this dynamic if needed
         userType: formData.userType
       }),
@@ -183,6 +185,23 @@ const LoginPage = () => {
                 />
               </div>
             </div>
+
+            <div className="input-group">
+              <label className="input-label">Email</label>
+              <div className="input-container">
+                <User className="input-icon" /> {/* You can replace icon if needed */}
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  className="form-input"
+                  autoComplete="email"
+                />
+              </div>
+            </div>
+
 
             <div className="input-group">
               <label className="input-label">Password</label>
