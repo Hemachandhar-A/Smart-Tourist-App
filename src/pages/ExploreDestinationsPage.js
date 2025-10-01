@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import DestinationCard from '../components/DestinationCard';
 import AddToItineraryModal from '../components/AddToItineraryModal';
 import './../assets/styles/ExploreDestinationsPage.css';
-import { getDestinations, getItineraries } from '../services/api';
 import placeholderImage from '../assets/images/destinations/placeholder.jpg';
-
+import { getDestinations, getItineraries, getDestinationImage } from '../services/api';
 const ExploreDestinationsPage = () => {
   const [allDestinations, setAllDestinations] = useState([]);
   const [itineraries, setItineraries] = useState([]);
@@ -24,16 +23,22 @@ const ExploreDestinationsPage = () => {
           getItineraries(),
         ]);
 
-        const formattedDestinations = destinationsResponse.data.map(item => ({
-          id: item.id,
-          name: item.name,
-          state: item.state,
-          description: item.description,
-          type: item.type,
-          safety: item.safety_level,
-          crowd: item.population_crowd,
-          image: placeholderImage,
-        }));
+        const formattedDestinations = destinationsResponse.data.map(item => {
+          const destination = {
+            id: item.id,
+            name: item.name,
+            state: item.state,
+            description: item.description,
+            type: item.type,
+            safety: item.safety_level,
+            crowd: item.population_crowd,
+          };
+          
+          return {
+            ...destination,
+            image: getDestinationImage(destination),
+          };
+        });
         setAllDestinations(formattedDestinations);
 
         const formattedItineraries = itinerariesResponse.data.map(item => ({
