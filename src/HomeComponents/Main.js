@@ -117,7 +117,7 @@ const handlePanicAlert = async () => {
         tourist_id: dynamicTouristId,
         latitude: roundedLatitude,
         longitude: roundedLongitude,
-        alert_type: "SuddenLocationDropOff"
+        alert_type: "PanicButtonPressed"
       })
     });
 

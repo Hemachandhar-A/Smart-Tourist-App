@@ -32,7 +32,7 @@ const ExploreDestinationsPage = () => {
           type: item.type,
           safety: item.safety_level,
           crowd: item.population_crowd,
-          image: placeholderImage, // Use the single placeholder image
+          image: placeholderImage,
         }));
         setAllDestinations(formattedDestinations);
 
@@ -45,7 +45,7 @@ const ExploreDestinationsPage = () => {
         setItineraries(formattedItineraries);
 
       } catch (err) {
-        setError('Failed to fetch data.');
+        setError('Failed to fetch data. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -57,7 +57,8 @@ const ExploreDestinationsPage = () => {
 
   const filteredDestinations = allDestinations.filter(destination => {
     const matchesSearch = destination.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = activeFilter.toLowerCase() === 'all' || (destination.type && destination.type.toLowerCase() === activeFilter.toLowerCase());
+    const matchesFilter = activeFilter.toLowerCase() === 'all' || 
+      (destination.type && destination.type.toLowerCase() === activeFilter.toLowerCase());
     return matchesSearch && matchesFilter;
   });
 
@@ -71,19 +72,46 @@ const ExploreDestinationsPage = () => {
     setSelectedDestination(null);
   };
 
-  if (loading) return <div className="loading-state">Loading...</div>;
-  if (error) return <div className="error-state">{error}</div>;
+  if (loading) {
+    return (
+      <div className="explore-page-container">
+        <div className="loading-state">
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ marginBottom: '16px', fontSize: '2rem' }}>🌍</div>
+            <div>Loading amazing destinations...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="explore-page-container">
+        <div className="error-state">
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ marginBottom: '16px', fontSize: '2rem' }}>⚠️</div>
+            <div>{error}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="explore-page-container">
       <header className="explore-header">
-        <Link to="/home" className="back-button">← Back to Home</Link>
+        <Link to="/home" className="back-button">
+          ← Back to Home
+        </Link>
         <div className="title-container">
           <h1 className="explore-title">Explore Destinations</h1>
-          <p className="subtitle">Verified images and destination filters coming soon !</p>
+          <p className="subtitle">Discover incredible places across India</p>
         </div>
         <div className="cta-button-container">
-          <Link to="/plan" className="plan-custom-button">+ Plan Custom Trip</Link>
+          <Link to="/plan" className="plan-custom-button">
+            ✨ Plan Custom Trip
+          </Link>
         </div>
       </header>
 
@@ -91,9 +119,10 @@ const ExploreDestinationsPage = () => {
         <div className="search-bar">
           <input
             type="text"
-            placeholder="Search for a destination..."
+            placeholder="🔍 Search destinations by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search destinations"
           />
         </div>
         <div className="filter-buttons">
@@ -102,21 +131,34 @@ const ExploreDestinationsPage = () => {
               key={filter}
               className={`filter-button ${activeFilter === filter ? 'active' : ''}`}
               onClick={() => setActiveFilter(filter)}
+              aria-pressed={activeFilter === filter}
             >
               {filter}
             </button>
           ))}
         </div>
       </div>
+
       <main className="destination-list">
         {filteredDestinations.length > 0 ? (
           filteredDestinations.map(destination => (
-            <DestinationCard key={destination.id} destination={destination} onAddClick={handleOpenModal} />
+            <DestinationCard 
+              key={destination.id} 
+              destination={destination} 
+              onAddClick={handleOpenModal} 
+            />
           ))
         ) : (
-          <p className="no-results">No destinations found. Try another search or filter.</p>
+          <div className="no-results">
+            <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🗺️</div>
+            <div>No destinations found matching your criteria</div>
+            <div style={{ fontSize: '0.95rem', marginTop: '8px', opacity: 0.8 }}>
+              Try adjusting your search or filters
+            </div>
+          </div>
         )}
       </main>
+
       {isModalOpen && (
         <AddToItineraryModal
           destination={selectedDestination}

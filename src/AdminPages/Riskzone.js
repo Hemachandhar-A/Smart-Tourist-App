@@ -209,7 +209,8 @@ const RiskZoneMap = () => {
         {/* Header */}
         <div style={{
           padding: '24px',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.40), rgba(0,0,0,0.55))', 
+          // background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>

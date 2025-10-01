@@ -317,7 +317,7 @@ const TouristAnalyticsDashboard = () => {
           </p>
         </div>
       </header>
-
+      <hr></hr>
       <div style={styles.mainContent}>
         <aside style={styles.sidebar}>
           <div style={styles.card}>
@@ -753,6 +753,7 @@ background: '#ffff',
     gap: '0.75rem',
     padding: '0.75rem',
     background: '#f8fafc',
+    color:'black',
     borderRadius: '0.5rem',
     fontSize: '0.875rem'
   },
