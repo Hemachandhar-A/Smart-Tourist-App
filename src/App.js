@@ -12,6 +12,7 @@ import Itenarymain from "./pages/ItenaryMain";
 import LoginPage from "./HomeComponents/LoginPage";
 import QRmain from "./HomeComponents/QRmain";
 import VerifiedPage from "./HomeComponents/VerifiedPage";
+import TouristListPage from "./data/TouristListPage";
 function App() {
   return (
     <Router>
@@ -26,6 +27,7 @@ function App() {
           <Route path="/home" element={<Itenarymain />} />
           <Route path="/explore" element={<ExploreDestinationsPage />} />
           <Route path="/plan" element={<PlanJourneyPage />} />
+          <Route path="/listoftourists" element={<TouristListPage />} />
           <Route path="/trip/:id" element={<TripDetailsPage />} />
           <Route path="/edit/:id" element={<TripDetailsPage />} />
         </Routes>

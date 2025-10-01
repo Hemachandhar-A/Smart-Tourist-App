@@ -36,24 +36,51 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    
-    setTimeout(() => {
-      if (!formData.username || !formData.password) {
-        setError('Please fill in all fields');
-        setIsLoading(false);
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
+
+  if (!formData.username || !formData.password) {
+    setError('Please fill in all fields');
+    setIsLoading(false);
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:8000/api/login/', { // Django endpoint
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        touristId: "T-" + Math.floor(1000 + Math.random() * 9000), // generate unique id
+        name: formData.username,
+        phone: "+91-9876543210", // you can make this dynamic if needed
+        userType: formData.userType
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      localStorage.setItem('userData', JSON.stringify(data));
+
+      if (formData.userType === 'tourist') {
+        navigate('/main'); // or profile page
       } else {
-        // Successful login - redirect based on user type
-        if (formData.userType === 'tourist') {
-          navigate('/main');
-        } else {
-          navigate('/admin');
-        }
+        navigate('/admin');
       }
-    }, 1500);
-  };
+    } else {
+      setError(data.error || 'Login failed');
+    }
+  } catch (err) {
+    setError('Network error. Try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
 
   return (
     <div className="login-container">
