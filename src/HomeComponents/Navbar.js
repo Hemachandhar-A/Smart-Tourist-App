@@ -66,10 +66,11 @@ const Navbar = ({ currentPage, setCurrentPage, isMobileMenuOpen, setIsMobileMenu
         <div className="mobile-menu">
           {navItems.map(item => (
             <button
+            type="button"
               key={item.id}
               className={`mobile-nav-link ${currentPage === item.id ? 'active' : ''}`}
               onClick={() => {
-                setCurrentPage(item.id);
+                handleNavClick(item.id);
                 setIsMobileMenuOpen(false);
               }}
             >
