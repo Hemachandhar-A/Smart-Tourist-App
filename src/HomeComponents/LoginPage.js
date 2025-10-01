@@ -47,7 +47,7 @@ const LoginPage = () => {
   }
 
   try {
-    const response = await fetch('http://localhost:8000/api/login/', { // Django endpoint
+    const response = await fetch('https://smart-tourist-app-backend.onrender.com/api/login/', { // Django endpoint
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
