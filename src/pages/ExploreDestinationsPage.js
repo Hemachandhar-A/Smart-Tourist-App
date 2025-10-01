@@ -77,7 +77,7 @@ const ExploreDestinationsPage = () => {
   return (
     <div className="explore-page-container">
       <header className="explore-header">
-        <Link to="/" className="back-button">← Back to Home</Link>
+        <Link to="/home" className="back-button">← Back to Home</Link>
         <div className="title-container">
           <h1 className="explore-title">Explore Destinations</h1>
           <p className="subtitle">Verified images and destination filters coming soon !</p>
