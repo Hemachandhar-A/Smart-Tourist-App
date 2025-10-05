@@ -14,6 +14,8 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentBg, setCurrentBg] = useState(0);
+  const [showAlert, setShowAlert] = useState(true);
+
 
   const backgrounds = [
     'https://images.pexels.com/photos/1007426/pexels-photo-1007426.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1280&fit=crop',
@@ -117,6 +119,23 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Persistent Alert */}
+      {showAlert && (
+        <div className="persistent-alert">
+          <div className="alert-content-wrapper">
+            <span className="alert-message">
+              ⚠️ Please note: The website may take a few moments to load fully. 
+              This happens because we're hosted on a serverless setup (Cloudflare + Render). 
+              Thanks for your patience!
+            </span>
+            <button className="alert-close" onClick={() => setShowAlert(false)} aria-label="Close alert">
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
 
       {/* Login Card */}
       <div className="login-card">
@@ -256,6 +275,7 @@ const LoginPage = () => {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
+
         .background-slider {
           position: absolute;
           top: 0;
@@ -380,6 +400,69 @@ const LoginPage = () => {
           color: #3b82f6;
         }
 
+        .persistent-alert {
+          position: fixed;
+          top: 80px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 15;
+          width: 90%;
+          max-width: 700px;
+          background: #fef3c7;
+          border: 1px solid #fbbf24;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          animation: alertSlideDown 0.4s ease-out;
+        }
+
+        @keyframes alertSlideDown {
+          from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        }
+
+        .alert-content-wrapper {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          padding: 1rem 1.25rem;
+        }
+
+        .alert-message {
+          flex: 1;
+          font-size: 0.875rem;
+          color: #78350f;
+          line-height: 1.5;
+          font-weight: 500;
+        }
+
+        .alert-close {
+          flex-shrink: 0;
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          line-height: 1;
+          color: #92400e;
+          cursor: pointer;
+          padding: 0;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+        }
+
+        .alert-close:hover {
+          background-color: rgba(146, 64, 14, 0.1);
+        }
+
         .login-card {
           position: relative;
           z-index: 5;
@@ -392,7 +475,7 @@ const LoginPage = () => {
           box-shadow: 
             0 20px 25px -5px rgba(0, 0, 0, 0.1),
             0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          margin-top: 100px;
+          margin-top: 140px;
           overflow: hidden;
         }
 
@@ -748,8 +831,17 @@ const LoginPage = () => {
           }
 
           .login-card {
-            margin: 120px 1rem 2rem;
+            margin: 140px 1rem 2rem;
             max-width: none;
+          }
+
+          .persistent-alert {
+            top: 70px;
+            width: 95%;
+          }
+
+          .alert-message {
+            font-size: 0.8125rem;
           }
 
           .card-header,
@@ -778,6 +870,10 @@ const LoginPage = () => {
 
           .nav-section {
             display: none;
+          }
+
+          .persistent-alert {
+            top: 65px;
           }
         }
       `}</style>
